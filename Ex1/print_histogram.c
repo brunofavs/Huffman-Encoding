@@ -15,6 +15,11 @@ typedef struct h_l{
 
 int main(int argc,char* argv[]){
 
+    if(argc != 2){
+        printf("[ERROR] Please input only the name of the source file\n");
+        exit(1);
+    }
+
     FILE* source_file = fopen(argv[1],"r");
     
     // Initial buffer size
