@@ -13,6 +13,9 @@ typedef struct h_l{
     int count;
 }histogram_line;
 
+int up_count(const void* a, const void* b);
+
+
 int main(int argc,char* argv[]){
 
     if(argc != 2){
@@ -66,6 +69,8 @@ int main(int argc,char* argv[]){
         }
     }
 
+    //* Sorting by count
+    qsort(histogram,buffer_size,sizeof(histogram_line),up_count);
 
     //* Printing histogram
     for(int n = 0;n<buffer_size;n++){
@@ -92,4 +97,9 @@ int main(int argc,char* argv[]){
         fputc(10,out_file); // 10 is ascii for \n
     }
 
+}
+
+
+int up_count(const void* a, const void* b){
+    return ((histogram_line*)a)->count > ((histogram_line*)b)->count ? 1 : -1;
 }
