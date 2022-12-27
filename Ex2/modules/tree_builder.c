@@ -1,4 +1,5 @@
 #include "tree_builder.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -72,15 +73,34 @@ int down_frequency(const void* a, const void* b){
     // This function should order from smallest to highest frequency.
     // A small detail is that non yet assigned nodes should be put in the end of the array
 
+    float float_tolerance = 0.00001;
+
+    // Node* elem_a = (Node*)a;
+    // Node* elem_b = (Node*)b;
+        // TODO FIGURE OUT WTF THE DIFERENCE IS XD
+    Node* elem_a = *(Node**)a;
+    Node* elem_b = *(Node**)b;
+    
+    //* For debugging
+    // printf("Node a adress is %p\n",elem_a);
+    // printf("Node b adress is %p\n\n",elem_b);
+    // printf("Node a frequency is %.3f\tNode b frequency is %.3f\n",elem_a->frequency,elem_b->frequency);
+    
+    // if(elem_a->frequency > elem_a->frequency){
+    //     printf("Freq %f is bigger than %f\n\n",elem_a->frequency,elem_b->frequency);
+    // }
+    // else{
+    //     printf("Freq %f is bigger than %f\n\n",elem_b->frequency,elem_a->frequency);
+    // };
+
+
     // If either value is 0, treat it as greater than the other value
-    if (((Node*)a)->frequency == 0.0) return 1; // a = 0, means A is bigger, so 1
-    if (((Node*)b)->frequency == 0.0) return -1;// b = 0, means B is bigger so -1
+    if (fabs(elem_a->frequency) - 0.0 < float_tolerance) return 1;// a = 0, means A is bigger, so 1
+    if (fabs(elem_b->frequency) - 0.0 < float_tolerance) return -1;// b = 0, means B is bigger so -1
+    if (fabs(elem_a->frequency - elem_b->frequency) < float_tolerance) return 0;
 
-    ((Node*)a)->frequency > ((Node*)b)->frequency ? printf("Freq %f is bigger than %f\n",((Node*)a)->frequency,((Node*)b)->frequency) : printf("Freq %f is bigger than %f\n",((Node*)b)->frequency,((Node*)a)->frequency);
-
-    return ((Node*)a)->frequency > ((Node*)b)->frequency ? 1 : -1; // 1 means a is bigger, -1 means b is bigger
+    return elem_a->frequency > elem_b->frequency ? 1 : -1; // 1 means a is bigger, -1 means b is bigger
 }
-
 
 Node* inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_length){
 
@@ -88,7 +108,12 @@ Node* inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_lengt
 
     // Array of pointers to node
     Node** node_pool = (Node**)calloc(2*hist_length-1,sizeof(Node*));
+    Node** node_pointers = (Node**)calloc(2*hist_length-1,sizeof(Node*));
 
+    if (node_pointers == NULL || node_pool == NULL){ //! If we allocate more than the system has f.example it returns null pointer
+        fprintf(stderr, "Error : Failed memory allocation");
+        exit(1);
+    }
     int dynamic_length = 2*hist_length-1;
     //! An binary tree given n leaf nodes will have 2n-1 total nodes including root
 
@@ -109,7 +134,15 @@ Node* inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_lengt
         node_pool[i] = createNode();
     }
 
-    printf("Histogram length is %d\n",hist_length);
+    printf("\tPrinting adresses before qsort\n");
+    for(int j = 0;j<dynamic_length;j++){ // Creating a array with the adresses of the nodes
+        node_pointers[j] = node_pool[j];  
+        //// printf("Adresses outside function %p\n", node_pointers[j]);
+    }
+
+
+
+    // printf("Histogram length is %d\n",hist_length);
     for(int i = 0;i<hist_length;i++){
         // node_pool[i] = createNode(); //! CANT BE UNCOMENTED
         node_pool[i]->symbol = frequency_histogram[i].symbol;
@@ -180,7 +213,7 @@ Node* inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_lengt
             node_pool[i+1]->parent =node_pool[internal_node_idx];
 
             // There isn't ever a case where i+1 because the loop always has a odd number of iterations since theres always 2n-1 nodes, so the last time i&&2 will equal 0
-            // is in the last-1 iteration, where will always be a i+1V
+            // is in the last-1 iteration, where will always be a i+1
             printf("\nAdress of inner node created is %p\n", node_pool[internal_node_idx]);        
             printf("\nAdress of internal node->one is %p\n", node_pool[internal_node_idx]->one);        
             printf("Adress of internal node->zero is %p\n", node_pool[internal_node_idx]->zero);        
@@ -192,16 +225,27 @@ Node* inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_lengt
             // TODO needs sorting to evaluate internal nodes as well each iteration
 
     }
-    for(int j = 0;j<dynamic_length;j++){
-        printf("Frequency of node is %.3f\n", node_pool[j]->frequency);
-    }
     
-    qsort(node_pool,dynamic_length,sizeof(Node),down_frequency);
+    qsort(node_pointers,dynamic_length,sizeof(Node*),down_frequency);
+    // I guess this is causing trouble because im changing the adress of the nodes by moving them in the array, which in turn may
+    // mess up the individual's node's pointer to another node, which changed
+    // The solution is to create another dynamic array, which wont be storing the arrays, just a pointer to them, this way by altering
+    // the elements the struct adress in memory itself wont change
+    // Im still somehow passing the wrong pointers, cant acess the fields...
+    
+    //* Debugging
+    // printf("\tPrinting adresses after qsort\n");
+    // for(int j = 0;j<dynamic_length;j++){ // Creating a array with the adresses of the nodes
+    //     printf("Adresses outside function %p\n", node_pointers[j]);
+    // }
 
     printf("\n\n\n\n\nFrequency orderered\n");
     for(int j = 0;j<dynamic_length;j++){
-        printf("Frequency of node is %.3f\n", node_pool[j]->frequency);
+        printf("Frequency of node is %.3f\n",node_pointers[j]->frequency);
     }
+
+
+
 
 
 
