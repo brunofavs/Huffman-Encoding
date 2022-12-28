@@ -25,7 +25,9 @@ int getHistogramLength(FILE* hist_file);
 
 freq_histogram_line* histogramBuilder(FILE* hist_file);
 
-Node* inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_length);
+char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_length);
+
+void codingTableWriter(FILE* coding_table,freq_histogram_line* histogram,int hist_length,char** code_array);
 
 
 #endif

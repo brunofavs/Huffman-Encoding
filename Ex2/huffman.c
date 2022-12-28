@@ -5,10 +5,17 @@
 int main(int argc,char* argv[]){
 
     FILE* hist_file = fopen(argv[1],"r");
+    FILE* coding_table = fopen("coding_table.txt","w");
     int histogram_length = getHistogramLength(hist_file);
     
     freq_histogram_line* histogram = histogramBuilder(hist_file);
 
-    Node* root = inverseTreeBuilder(histogram,histogram_length);
+    char** code_array = inverseTreeBuilder(histogram,histogram_length);
+
+    // codingTableWriter(coding_table,histogram,histogram_length,code_array);
+
+    // for(int i = 0;i<histogram_length;i++){
+    //     printf("%s\n",code_array[i]);
+    // }
 
 }
