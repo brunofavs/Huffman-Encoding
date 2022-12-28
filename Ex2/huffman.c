@@ -12,7 +12,7 @@ int main(int argc,char* argv[]){
 
     char** code_array = inverseTreeBuilder(histogram,histogram_length);
 
-    // codingTableWriter(coding_table,histogram,histogram_length,code_array);
+    codingTableWriter(coding_table,histogram,histogram_length,code_array);
 
     // for(int i = 0;i<histogram_length;i++){
     //     printf("%s\n",code_array[i]);

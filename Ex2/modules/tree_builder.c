@@ -38,6 +38,7 @@ Node *createNode(){
     node->parent = NULL;
     node->one = NULL;
     node->zero = NULL; // We're in a leaf by default.
+    node->frequency = *(float*)calloc(1,sizeof(float)); //Ig this ensures the float is on heap 
     return node;
 }
 
@@ -344,13 +345,10 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
         printf("%s",code_array[i]);
     }
 
-    // for(int i = 0;i<dynamic_length;i++){
-    //     free(node_pool[i]);
-    // } //! Ig this are invadid pointers to free for some reason
-    for (int i = 0; i < 10*2*hist_length-1; i++) {
-        // free(node_pool[i]);
-        free(node_pointers[i]);
-    }
+    // for (int i = 0; i < 10*2*hist_length-1; i++) {
+    //     // free(node_pool[i]);
+    //     free(node_pointers[i]);
+    // }
 
 
     free(node_pointers);
