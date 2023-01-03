@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_CODE_LENGTH 20
+
 // Functions : Create node, initialize variables;
 // ------ Create node------------------
 // If its a leaf, both pointers should be null
@@ -26,7 +28,7 @@ char *strrev(char *str)
 }
 
 Node *createNode(){
-    Node *node = (Node *)calloc(1, sizeof(node)); // Initialized at 0 needs casting
+    Node *node = (Node *)calloc(1, sizeof(Node)); // Initialized at 0 needs casting
 
     if (node == NULL)
     { //! If we allocate more than the system has f.example it returns null pointer
@@ -38,7 +40,7 @@ Node *createNode(){
     node->parent = NULL;
     node->one = NULL;
     node->zero = NULL; // We're in a leaf by default.
-    node->frequency = *(float*)calloc(1,sizeof(float)); //Ig this ensures the float is on heap 
+    node->frequency = 0; //*(float*)calloc(1,sizeof(float)); //Ig this ensures the float is on heap 
     return node;
 }
 
@@ -123,13 +125,14 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
     float frequency_sum = 0; // Will keep track when the frequency_sum reaches 1
 
     // Array of pointers to node
-    Node** node_pool = (Node**)calloc(10*2*hist_length-1,sizeof(Node*));
-    Node** node_pointers = (Node**)calloc(10*2*hist_length-1,sizeof(Node*));
+    int dynamic_length = 2*hist_length-1;
+    Node** node_pool = (Node**)calloc(dynamic_length,sizeof(Node*));
+    Node** node_pointers = (Node**)calloc(dynamic_length,sizeof(Node*));
 
     char** code_array = (char**)malloc(hist_length*sizeof(char*)); // Well declaring them before using the above seems to get arround the overflow
 
     for (int i = 0; i < hist_length; i++) {
-        code_array[i] = malloc(10 * sizeof(char));
+        code_array[i] = malloc(MAX_CODE_LENGTH * sizeof(char));
     }   
 
     
@@ -138,7 +141,6 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
         fprintf(stderr, "Error : Failed memory allocation");
         exit(1);
     }
-    int dynamic_length = 2*hist_length-1;
     //! An binary tree given n leaf nodes will have 2n-1 total nodes including root
 
     /* TODO
@@ -157,19 +159,10 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
    //TODO Figure out why this line is causing heap buffer overflow
     for(int i = 0;i<dynamic_length;i++){ // Creates every node
         node_pool[i] = createNode();
+        node_pointers[i] = node_pool[i];  
     }
 
-    // printf("\tPrinting adresses before qsort\n");
-    for(int j = 0;j<dynamic_length;j++){ // Creating a array with the adresses of the nodes
-        node_pointers[j] = node_pool[j];  
-        //// printf("Adresses outside function %p\n", node_pointers[j]);
-    }
-
-
-
-    // printf("Histogram length is %d\n",hist_length);
     for(int i = 0;i<hist_length;i++){
-        // node_pool[i] = createNode(); //! CANT BE UNCOMENTED
         node_pool[i]->symbol = frequency_histogram[i].symbol;
         node_pool[i]->frequency = frequency_histogram[i].frequency;
         // printf("Adress of node is %p\n", node_pool[i]);
@@ -177,49 +170,11 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
         // printf("Frequency of node is %f\n", node_pool[i]->frequency);
     }
 
-        //! Debugging, yet to fully understand
-        // printf("testing outside loop\n");
-        // printf("symbol of node is %d\n", node_pool[0]->symbol);
-        // printf("symbol of node is %d\n", node_pool[1]->symbol);
-        // printf("symbol of node is %d\n", node_pool[2]->symbol);
-        // printf("symbol of node is %d\n", node_pool[3]->symbol);
-        // printf("symbol of node is %d\n", node_pool[4]->symbol);
-        // printf("symbol of node is %d\n", node_pool[5]->symbol);
-        // printf("symbol of node is %d\n", node_pool[6]->symbol);
-        // printf("symbol of node is %d\n", node_pool[7]->symbol);
-        // printf("symbol of node is %d\n", node_pool[8]->symbol);
-        
-
-        // printf("Adress of node is %p\n", node_pool[0]);
-        // printf("Adress of node is %p\n", node_pool[1]);
-        // printf("Adress of node is %p\n", node_pool[2]);
-        // printf("Adress of node is %p\n", node_pool[3]);
-        // printf("Adress of node is %p\n", node_pool[4]);
-        // printf("Adress of node is %p\n", node_pool[5]);
-        // printf("Adress of node is %p\n", node_pool[6]);
-        // printf("Adress of node is %p\n", node_pool[7]);
-        // printf("Adress of node is %p\n", node_pool[8]);
-        // exit(1); 
-
-    // Pool will contain all the nodes ordered by frequency
-    //! Looping the dynamic array till frequency_sum = 1;
-    // for(int i = 0;i<hist_length;i++){
-    //     printf("\nAdress of node is %p\n", node_pool[i]);
-    //     printf("Symbol of node is %d\n", node_pool[i]->symbol);
-    //     printf("Frequency of node is %f\n", node_pool[i]->frequency);
-    // }
-
-    // exit(1);
-    
     printf("Dynamic length is %d\n",dynamic_length);
+    printf("Number of leafs is %d\n",hist_length);
     
     int internal_node_idx = hist_length; // Position to insert internal nodes , might have to pass this outside loop 
     for(int i = 0; i<dynamic_length-1;i++){
-
-        // if(frequency_sum >= 1){
-        //     printf("Cumulative frequency surpassed 1 (%f)\n",frequency_sum);
-        //     break;
-        //     }
 
         printf("\nAdress of node is %p\n", node_pool[i]);        
         printf("Symbol of node is %c\n", node_pool[i]->symbol);
@@ -228,26 +183,12 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
         
 
         if(i%2 == 0){
-            //! Cant be created here neither, i dont know why..
-            //? node_pool[internal_node_idx] = createNode();
-
-            // node_pool[internal_node_idx]->one =node_pool[i+1];
-            // node_pool[internal_node_idx]->zero =node_pool[i];
-            // node_pool[internal_node_idx]->frequency =node_pool[i]->frequency + node_pool[i+1]->frequency;
-
-            // node_pool[i]->parent = node_pool[internal_node_idx];
-            // node_pool[i+1]->parent =node_pool[internal_node_idx];
-
-
             node_pointers[internal_node_idx]->one =node_pointers[i+1];
             node_pointers[internal_node_idx]->zero =node_pointers[i];
             node_pointers[internal_node_idx]->frequency =node_pointers[i]->frequency + node_pointers[i+1]->frequency;
 
             node_pointers[i]->parent = node_pointers[internal_node_idx];
             node_pointers[i+1]->parent =node_pointers[internal_node_idx];
-
-
-
 
             // There isn't ever a case where i+1 because the loop always has a odd number of iterations since theres always 2n-1 nodes, so the last time i&&2 will equal 0
             // is in the last-1 iteration, where will always be a i+1
@@ -256,12 +197,8 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
             printf("Adress of internal node->zero is %p\n", node_pointers[internal_node_idx]->zero);        
             printf("Frequency of internal node->zero is %.3f\n", node_pointers[internal_node_idx]->frequency);        
             
-            
+            //! Quicksort the array of pointers, not the array where the nodes are actually stored            
             qsort(node_pointers,dynamic_length,sizeof(Node*),down_frequency);
-
-            // for(int j = 0;j<dynamic_length-1;j++){
-            //     printf("Frequency of node is %.3f\n",node_pointers[j]->frequency);
-            // }
 
             if(internal_node_idx == dynamic_length){
                 printf("Breaking\n");
@@ -271,18 +208,6 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
             internal_node_idx++;
         }
     }
-    
-    // I guess this is causing trouble because im changing the adress of the nodes by moving them in the array, which in turn may
-    // mess up the individual's node's pointer to another node, which changed
-    // The solution is to create another dynamic array, which wont be storing the arrays, just a pointer to them, this way by altering
-    // the elements the struct adress in memory itself wont change
-    // Im still somehow passing the wrong pointers, cant acess the fields...
-    
-    //* Debugging
-    // printf("\tPrinting adresses after qsort\n");
-    // for(int j = 0;j<dynamic_length;j++){ // Creating a array with the adresses of the nodes
-    //     printf("Adresses outside function %p\n", node_pointers[j]);
-    // }
 
     printf("\n\n\n\n\nFrequency orderered\n");
     for(int j = 0;j<dynamic_length;j++){
@@ -312,7 +237,7 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
         current_node = node_pool[i];
         past_node = node_pool[i];
 
-        char code[10] = {};
+        char code[30] = {};
         int code_building_idx = 0;
 
 
@@ -344,11 +269,6 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
 
         printf("%s",code_array[i]);
     }
-
-    // for (int i = 0; i < 10*2*hist_length-1; i++) {
-    //     // free(node_pool[i]);
-    //     free(node_pointers[i]);
-    // }
 
 
     free(node_pointers);
