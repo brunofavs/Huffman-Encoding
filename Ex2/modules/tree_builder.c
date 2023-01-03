@@ -100,16 +100,16 @@ int down_frequency(const void* a, const void* b){
     Node* elem_b = *(Node**)b;
     
     //* For debugging
-    // printf("Node a adress is %p\n",elem_a);
-    // printf("Node b adress is %p\n\n",elem_b);
-    // printf("Node a frequency is %.3f\tNode b frequency is %.3f\n",elem_a->frequency,elem_b->frequency);
+    printf("Node a adress is %p\n",elem_a);
+    printf("Node b adress is %p\n\n",elem_b);
+    printf("Node a frequency is %.3f\tNode b frequency is %.3f\n",elem_a->frequency,elem_b->frequency);
     
-    // if(elem_a->frequency > elem_a->frequency){
-    //     printf("Freq %f is bigger than %f\n\n",elem_a->frequency,elem_b->frequency);
-    // }
-    // else{
-    //     printf("Freq %f is bigger than %f\n\n",elem_b->frequency,elem_a->frequency);
-    // };
+    if(elem_a->frequency > elem_a->frequency){
+        printf("Freq %f is bigger than %f\n\n",elem_a->frequency,elem_b->frequency);
+    }
+    else{
+        printf("Freq %f is bigger than %f\n\n",elem_b->frequency,elem_a->frequency);
+    };
 
 
     // If either value is 0, treat it as greater than the other value
@@ -143,20 +143,6 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
     }
     //! An binary tree given n leaf nodes will have 2n-1 total nodes including root
 
-    /* TODO
-    Why cant I create the nodes inside the loop where i assign value to symbol?
-    So, using node_pool[i] = createNode(); inside the for loop makes it so the symbol value isn't stored outside the loop.
-    Also yielding malloc assertation and corrupted top sizes errors, tested for memory leaks with valgrind and seemed fine
-    
-    Using a auxiliary loop above solves the problem. But why? The memory allocated by createNode() is heap memory so why would it be cleared?
-    Assigning the symbol to a static value doesn't do anything, as expected.
-
-    The same thing is happening when creating internal nodes later on in the code.
-
-    node_pool[0 ... hist_length] = createNode(); This grammar doesn't seem to work
-    */
-   
-   //TODO Figure out why this line is causing heap buffer overflow
     for(int i = 0;i<dynamic_length;i++){ // Creates every node
         node_pool[i] = createNode();
         node_pointers[i] = node_pool[i];  
@@ -237,7 +223,7 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
         current_node = node_pool[i];
         past_node = node_pool[i];
 
-        char code[30] = {};
+        char code[MAX_CODE_LENGTH] = {};
         int code_building_idx = 0;
 
 
