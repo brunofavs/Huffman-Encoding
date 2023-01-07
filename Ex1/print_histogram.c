@@ -74,7 +74,7 @@ int main(int argc,char* argv[]){
 
     //* Printing histogram
     for(int n = 0;n<buffer_size;n++){
-        if(histogram[n].symbol == 0)
+        if(histogram[n].symbol == 0 || histogram[n].symbol == 10)
             continue;
         printf("Character: %c (%d)",histogram[n].symbol,histogram[n].symbol);
         printf("\tCount: %d\n",histogram[n].count);
@@ -86,8 +86,7 @@ int main(int argc,char* argv[]){
 
 
     for(int n = 0;n<buffer_size;n++){
-
-        if(histogram[n].symbol == 0)
+        if(histogram[n].symbol == 0 || histogram[n].symbol == 10)
             continue; // Because of empty buffer
 
         // fputc(histogram[n].symbol,out_file); // To print letters to outfile

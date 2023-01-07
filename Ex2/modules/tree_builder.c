@@ -81,7 +81,7 @@ freq_histogram_line* histogramBuilder(FILE* hist_file){
 
     for(int i = 0;i<hist_lengh;i++){
         freq_histogram[i].frequency /= num_of_chars;
-        printf("Character : %d\t\tFrequency : %.3f\n",freq_histogram[i].symbol,freq_histogram[i].frequency);
+        printf("Character : %d\t\t Relative Frequency : %.3f\n",freq_histogram[i].symbol,freq_histogram[i].frequency);
     }
 
     return freq_histogram;
@@ -100,15 +100,15 @@ int down_frequency(const void* a, const void* b){
     Node* elem_b = *(Node**)b;
     
     //* For debugging
-    printf("Node a adress is %p\n",elem_a);
-    printf("Node b adress is %p\n\n",elem_b);
-    printf("Node a frequency is %.3f\tNode b frequency is %.3f\n",elem_a->frequency,elem_b->frequency);
+    //printf("Node a adress is %p\n",elem_a);
+    //printf("Node b adress is %p\n\n",elem_b);
+    //printf("Node a frequency is %.3f\tNode b frequency is %.3f\n",elem_a->frequency,elem_b->frequency);
     
     if(elem_a->frequency > elem_a->frequency){
-        printf("Freq %f is bigger than %f\n\n",elem_a->frequency,elem_b->frequency);
+    //    printf("Freq %f is bigger than %f\n\n",elem_a->frequency,elem_b->frequency);
     }
     else{
-        printf("Freq %f is bigger than %f\n\n",elem_b->frequency,elem_a->frequency);
+    //    printf("Freq %f is bigger than %f\n\n",elem_b->frequency,elem_a->frequency);
     };
 
 
@@ -268,8 +268,8 @@ void codingTableWriter(FILE* coding_table,freq_histogram_line* histogram,int his
 
     printf("\n");
     for(int i = 0;i<hist_length;i++){
-        printf("%c\n",histogram[i].symbol);
-        printf("%s\n",code_array[i]);
+        // printf("%c\n",histogram[i].symbol);
+        // printf("%s\n",code_array[i]);
 
         fputc(histogram[i].symbol,coding_table);
         fputc(32,coding_table); //Space
