@@ -93,9 +93,6 @@ int down_frequency(const void* a, const void* b){
 
     float float_tolerance = 0.00001;
 
-    // Node* elem_a = (Node*)a;
-    // Node* elem_b = (Node*)b;
-        // TODO FIGURE OUT WTF THE DIFERENCE IS XD
     Node* elem_a = *(Node**)a;
     Node* elem_b = *(Node**)b;
     
@@ -104,17 +101,13 @@ int down_frequency(const void* a, const void* b){
     //printf("Node b adress is %p\n\n",elem_b);
     //printf("Node a frequency is %.3f\tNode b frequency is %.3f\n",elem_a->frequency,elem_b->frequency);
     
-    if(elem_a->frequency > elem_a->frequency){
+    // if(elem_a->frequency > elem_a->frequency){
     //    printf("Freq %f is bigger than %f\n\n",elem_a->frequency,elem_b->frequency);
-    }
-    else{
+    // }
+    // else{
     //    printf("Freq %f is bigger than %f\n\n",elem_b->frequency,elem_a->frequency);
-    };
+    // };
 
-
-    // If either value is 0, treat it as greater than the other value
-    if (fabs(elem_a->frequency) - 0.0 < float_tolerance) return 1;// a = 0, means A is bigger, so 1
-    if (fabs(elem_b->frequency) - 0.0 < float_tolerance) return -1;// b = 0, means B is bigger so -1
     if (fabs(elem_a->frequency - elem_b->frequency) < float_tolerance) return 0;
 
     return elem_a->frequency > elem_b->frequency ? 1 : -1; // 1 means a is bigger, -1 means b is bigger
@@ -135,7 +128,6 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
         code_array[i] = malloc(MAX_CODE_LENGTH * sizeof(char));
     }   
 
-    
 
     if (node_pointers == NULL || node_pool == NULL){ //! If we allocate more than the system has f.example it returns null pointer
         fprintf(stderr, "Error : Failed memory allocation");
@@ -176,7 +168,8 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
             node_pointers[i]->parent = node_pointers[internal_node_idx];
             node_pointers[i+1]->parent =node_pointers[internal_node_idx];
 
-            // There isn't ever a case where i+1 because the loop always has a odd number of iterations since theres always 2n-1 nodes, so the last time i&&2 will equal 0
+            // There isn't ever a case where i+1 because the loop always has a odd number 
+            // of iterations since theres always 2n-1 nodes, so the last time i&&2 will equal 0
             // is in the last-1 iteration, where will always be a i+1
             printf("\nAdress of inner node created is %p\n", node_pointers[internal_node_idx]);        
             printf("\nAdress of internal node->one is %p\n", node_pointers[internal_node_idx]->one);        
@@ -226,13 +219,11 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
         char code[MAX_CODE_LENGTH] = {};
         int code_building_idx = 0;
 
-
         printf("\n\nCode of symbol %c is: (inverted)\t",node_pool[i]->symbol);
 
         while(current_node->parent != NULL) { // If null means we are at root
 
             current_node = current_node->parent;
-
             if(current_node->one == past_node){
                 // printf("1");
                 code[code_building_idx] = '1';
@@ -242,17 +233,13 @@ char** inverseTreeBuilder(freq_histogram_line* frequency_histogram,int hist_leng
                 code[code_building_idx] = '0';
             }
             code_building_idx++;
-
             past_node = current_node; // After comparing, i can update the past node
         }
-
         code[code_building_idx] = '\0'; // Null, to be interpreted as string
 
         strrev(code);
-        
         strcpy(code_array[i],code); // Without this im assigning the heap adress to a stack adress
                                     // Also for this the code_array length must be defined, hence the for in lines 130
-
         printf("%s",code_array[i]);
     }
 
