@@ -6,12 +6,6 @@
 
 #define MAX_CODE_LENGTH 20
 
-// Functions : Create node, initialize variables;
-// ------ Create node------------------
-// If its a leaf, both pointers should be null
-// If its a interior node, we could use a special character
-
-// ------ Root node------------------
 char *strrev(char *str)
 {
       char *p1, *p2;
